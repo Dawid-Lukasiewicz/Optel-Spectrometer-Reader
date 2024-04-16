@@ -19,6 +19,7 @@ plt.ylabel("Values")
 
 def signal_handler(sig, frame):
     print("\nClosing serial port...")
+    usbPort.read_all()
     usbPort.close()
     print("Serial port is closed.")
     sys.exit(0)
