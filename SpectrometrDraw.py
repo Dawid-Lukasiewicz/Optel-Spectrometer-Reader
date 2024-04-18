@@ -103,10 +103,15 @@ while True:
         # It is no worth  now, I would need to read 2 bytes at once. The frame end is signed with value 65277
         usbReponse = usbPort.read(2048*2)
         usbPort.read(2)
+        # usbReponse = usbPort.read(2048*2+2)
+        # index = usbReponse.find(b"\xfe\xfd")
+        # print(index)
+        # if index < 2048*2:
+        #     usbPort.write(b"R")
+        #     usbPort.read_all()
+        #     continue
+
         values = decode_binary_stream(usbReponse)
-        # print(fr"Device response {usbReponse}")
-        # print(fr"Decoded {values}")
-        # print(fr"Decoded {len(values)}")
         ax.clear()
         ax.plot(waveLengthRange, values)
         ax.set_title("Spectrometer - pomiar widma", fontsize=20)
