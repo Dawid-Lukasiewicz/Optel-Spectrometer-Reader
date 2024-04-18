@@ -39,7 +39,7 @@ def decode_binary_stream(binary_stream):
 
     return decoded_values
 
-def encode_number(value):
+def number_to_16bit(value):
     # Podziel wartość na części wysokiego i niskiego bajtu
     high_byte = value // 256
     low_byte = value % 256
@@ -50,10 +50,10 @@ if not usbPort.isOpen():
     exit(1)
 
 # K, #5, Offset_UV_VIS_MSB, Offset_UV_VIS_LSB
-usbPort.write(b"K5"+encode_number(offset))
-print(b"K5"+encode_number(offset))
-usbPort.write(b"T"+encode_number(releaseTime))
-print(b"T"+encode_number(releaseTime))
+usbPort.write(b"K5"+number_to_16bit(offset))
+print("K5 "+str(offset))
+usbPort.write(b"T"+number_to_16bit(releaseTime))
+print("T "+str(releaseTime)+" ms")
 
 while True:
     try:
