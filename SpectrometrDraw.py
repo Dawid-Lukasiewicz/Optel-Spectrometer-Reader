@@ -6,13 +6,54 @@ import matplotlib.pyplot as plt
 import serial
 import serial.tools
 import signal
+import argparse
 
-offset = 256
-releaseTime = 4000
+parser = argparse.ArgumentParser(description='Program z trzema argumentami')
+
+parser.add_argument(
+                "--offset",
+                "-o",
+                required=False,
+                default=256,
+                action="store",
+                type=int,
+                help="Offset of spectrometer, max is 510"
+)
+parser.add_argument(
+                "--release_time",
+                "-t",
+                required=False,
+                default=4000,
+                action="store",
+                type=int,
+                help="Release time of every measurement, max is 4500 ms"
+)
+parser.add_argument(
+                "--device",
+                "-d",
+                required=False,
+                default="/dev/ttyUSB0",
+                action="store",
+                type=str,
+                help="name of the USB device"
+)
+
+args = parser.parse_args()
+
+
+offset = args.offset
+releaseTime = args.release_time
+deviceName =  args.device
+
 waveLengthRange = np.linspace(200, 700, 2048)
 
 # print(serial.tools.list_ports())
-usbPort = serial.Serial('/dev/ttyUSB0', 115200, timeout=5, write_timeout=1)
+
+try:
+    usbPort = serial.Serial(deviceName, 115200, timeout=5, write_timeout=1)
+except serial.SerialException as e:
+    print(fr"No device: {deviceName}")
+    exit(1)
 
 # to run GUI event loop
 plt.ion()
