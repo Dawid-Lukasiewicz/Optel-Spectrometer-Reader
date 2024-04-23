@@ -1,4 +1,3 @@
-# importing libraries
 import time
 import sys
 import numpy as np
@@ -8,7 +7,7 @@ import serial.tools
 import signal
 import argparse
 
-parser = argparse.ArgumentParser(description='Program z trzema argumentami')
+parser = argparse.ArgumentParser(description='Communication with Optel scpectrometer via USB')
 
 parser.add_argument(
                 "--offset",
@@ -35,18 +34,33 @@ parser.add_argument(
                 default="/dev/ttyUSB0",
                 action="store",
                 type=str,
-                help="name of the USB device"
+                help="Name of the USB device"
+)
+parser.add_argument(
+                "--average_number",
+                "-n",
+                required=False,
+                default=10,
+                action="store",
+                type=int,
+                help="Number of measurements to calculate"
 )
 
 args = parser.parse_args()
 
+SAMPLES_NUMBER = 2048
+BYTES_PER_VALUE = 2
 
 offset = args.offset
 releaseTime = args.release_time
 deviceName =  args.device
+averageNumber =  args.average_number
 
-waveLengthRange = np.linspace(200, 700, 2048)
+waveLengthRange = np.linspace(200, 700, SAMPLES_NUMBER)
 
+sampleCount = 0
+samplesList = []
+averageList = []
 # print(serial.tools.list_ports())
 
 try:
@@ -57,7 +71,7 @@ except serial.SerialException as e:
 
 # to run GUI event loop
 plt.ion()
-figure, ax = plt.subplots(figsize=(10, 8))
+figure, ax = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
 
 def signal_handler(sig, frame):
     print("\nClosing serial port...")
@@ -101,23 +115,33 @@ while True:
         usbPort.write(b"R")
         # TODO: read_until would be the best to cut off the  end of the stream sign
         # It is no worth  now, I would need to read 2 bytes at once. The frame end is signed with value 65277
-        usbReponse = usbPort.read(2048*2)
-        usbPort.read(2)
-        # usbReponse = usbPort.read(2048*2+2)
-        # index = usbReponse.find(b"\xfe\xfd")
-        # print(index)
-        # if index < 2048*2:
-        #     usbPort.write(b"R")
-        #     usbPort.read_all()
-        #     continue
+        usbReponse = usbPort.read(SAMPLES_NUMBER*BYTES_PER_VALUE)
+        usbPort.read(BYTES_PER_VALUE)
 
         values = decode_binary_stream(usbReponse)
-        ax.clear()
-        ax.plot(waveLengthRange, values)
-        ax.set_title("Spectrometer - pomiar widma", fontsize=20)
-        ax.set_ylim([0, 16383])
-        ax.set_xlabel("długość fali [nm]")
-        ax.set_ylabel("Natężenie światła [u.j]")
+        samplesList.append(values)
+        sampleCount += 1
+
+        if sampleCount >= averageNumber:
+            sampleCount = 0
+            for sampleIdx in range(SAMPLES_NUMBER):
+                sampleSum = sum(samplesList[measurementIdx][sampleIdx] for measurementIdx in range(averageNumber))
+                sampleAverage = sampleSum / averageNumber
+                averageList.append(sampleAverage)
+            ax[1].clear()
+            ax[1].plot(waveLengthRange, averageList)
+            ax[1].set_title("Spectrometer - średnia pomiaru widma", fontsize=20)
+            ax[1].set_ylim([0, 16383])
+            ax[1].set_xlabel("Długość fali [nm]")
+            ax[1].set_ylabel("Natężenie światła [u.j]")
+
+
+        ax[0].clear()
+        ax[0].plot(waveLengthRange, values)
+        ax[0].set_title("Spectrometer - pomiar widma", fontsize=20)
+        ax[0].set_ylim([0, 16383])
+        ax[0].set_xlabel("Długość fali [nm]")
+        ax[0].set_ylabel("Natężenie światła [u.j]")
         figure.canvas.draw()
         figure.canvas.flush_events()
     except serial.SerialException as e:
