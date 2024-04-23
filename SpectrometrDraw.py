@@ -115,6 +115,7 @@ while True:
         ax.clear()
         ax.plot(waveLengthRange, values)
         ax.set_title("Spectrometer - pomiar widma", fontsize=20)
+        ax.set_ylim([0, 16383])
         ax.set_xlabel("długość fali [nm]")
         ax.set_ylabel("Natężenie światła [u.j]")
         figure.canvas.draw()
