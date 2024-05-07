@@ -134,8 +134,8 @@ while True:
             ax[1].set_ylim([0, 16383])
             ax[1].set_xlabel("Długość fali [nm]")
             ax[1].set_ylabel("Natężenie światła [u.j]")
+            samplesList.clear()
             averageList.clear()
-
 
         ax[0].clear()
         ax[0].plot(waveLengthRange, values)
