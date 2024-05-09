@@ -22,7 +22,7 @@ parser.add_argument(
                 "--release_time",
                 "-t",
                 required=False,
-                default=4000,
+                default=1,
                 action="store",
                 type=int,
                 help="Release time of every measurement, max is 4500 ms"
