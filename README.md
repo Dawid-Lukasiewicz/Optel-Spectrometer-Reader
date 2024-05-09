@@ -12,6 +12,6 @@ The basic usage of script should be enough to perform good measurement.
 - Number of measurements taken is set to default that is 10. If You want to change use -n flag
 
 ```
-python SpectrometrDraw.py -t 1 -o 510 -d COM<n>
+python SpectrometerDraw.py -t 1 -o 510 -d COM<n>
 ```
 
