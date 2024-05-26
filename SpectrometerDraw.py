@@ -55,6 +55,8 @@ RED_WAVE_REF = 660
 SAMPLES_NUMBER = 2048
 N1 = 1048
 N2 = 1440
+B = 189.796
+A = 0.326
 
 BYTES_PER_VALUE = 2
 
@@ -63,6 +65,7 @@ releaseTime = args.release_time
 deviceName =  args.device
 averageNumber =  args.average_number
 
+# waveLengthRange = np.arange(B, RED_WAVE_REF, A)
 waveLengthBefore = np.linspace(MIN_WAVE, GREEN_WAVE_REF-1, N1)
 waveLengthRange = np.linspace(GREEN_WAVE_REF, RED_WAVE_REF, N2-N1)
 waveLengthAfter  = np.linspace(RED_WAVE_REF+1, MAX_WAVE, SAMPLES_NUMBER-N2)
