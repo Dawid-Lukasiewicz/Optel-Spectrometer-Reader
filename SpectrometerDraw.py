@@ -1,4 +1,6 @@
 import time
+from datetime import datetime
+from pathlib import Path
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
@@ -45,6 +47,13 @@ parser.add_argument(
                 type=int,
                 help="Number of measurements to calculate"
 )
+parser.add_argument(
+                "--save_data",
+                "-s",
+                required=False,
+                action="store_true",
+                help="Save to files"
+)
 
 args = parser.parse_args()
 
@@ -59,6 +68,15 @@ B = 189.796
 A = 0.326
 
 BYTES_PER_VALUE = 2
+
+if args.save_data:
+    curr_dir = Path().cwd()
+    measure_dir = curr_dir.joinpath("measure")
+    if not measure_dir.exists():
+        measure_dir.mkdir()
+    measure_dir = measure_dir.joinpath(str(datetime.now().strftime("%d:%m:%Y-%H:%M:%S")))
+    if not measure_dir.exists():
+        measure_dir.mkdir()
 
 offset = args.offset
 releaseTime = args.release_time
@@ -124,7 +142,7 @@ usbPort.write(b"K5"+number_to_16bit(offset))
 print("K5 "+str(offset))
 usbPort.write(b"T"+number_to_16bit(releaseTime))
 print("T "+str(releaseTime)+" ms")
-
+i = 0
 while True:
     try:
         usbPort.write(b"R")
@@ -149,6 +167,12 @@ while True:
             ax[1].set_ylim([0, 16383])
             ax[1].set_xlabel("Długość fali [nm]")
             ax[1].set_ylabel("Natężenie światła [u.j]")
+            if args.save_data:
+                file = measure_dir.joinpath(fr"file{i}.txt")
+                with open(file, "w") as f:
+                    for idx in range(len(waveLengthRange)):
+                        f.write(str(waveLengthRange[idx]) + "," + str(averageList[idx]) + "\r\n")
+                i += 1
             samplesList.clear()
             averageList.clear()
 
@@ -156,7 +180,7 @@ while True:
         ax[0].plot(waveLengthRange, values)
         ax[0].set_title("Spectrometer - pomiar widma", fontsize=20)
         ax[0].set_ylim([0, 16383])
-        ax[0].set_xlabel("Długość fali [nm]")
+        # ax[0].set_xlabel("Długość fali [nm]")
         ax[0].set_ylabel("Natężenie światła [u.j]")
         figure.canvas.draw()
         figure.canvas.flush_events()
