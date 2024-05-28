@@ -172,6 +172,7 @@ while True:
                 with open(file, "w") as f:
                     for idx in range(len(waveLengthRange)):
                         f.write(str(waveLengthRange[idx]) + "," + str(averageList[idx]) + "\r\n")
+                figure.savefig(measure_dir.joinpath(fr"file{i}"))
                 i += 1
             samplesList.clear()
             averageList.clear()
