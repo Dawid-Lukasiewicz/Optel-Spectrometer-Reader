@@ -83,12 +83,10 @@ releaseTime = args.release_time
 deviceName =  args.device
 averageNumber =  args.average_number
 
-# waveLengthRange = np.arange(B, RED_WAVE_REF, A)
-waveLengthBefore = np.linspace(MIN_WAVE, GREEN_WAVE_REF-1, N1)
-waveLengthRange = np.linspace(GREEN_WAVE_REF, RED_WAVE_REF, N2-N1)
-waveLengthAfter  = np.linspace(RED_WAVE_REF+1, MAX_WAVE, SAMPLES_NUMBER-N2)
+waveLengthRange = np.arange(B, RED_WAVE_REF, A)
+restOfSample = SAMPLES_NUMBER - len(waveLengthRange)
+waveLengthAfter = np.linspace(RED_WAVE_REF, 857, restOfSample)
 
-waveLengthRange = np.insert(waveLengthRange, 0, waveLengthBefore)
 waveLengthRange = np.append(waveLengthRange, waveLengthAfter)
 
 sampleCount = 0
