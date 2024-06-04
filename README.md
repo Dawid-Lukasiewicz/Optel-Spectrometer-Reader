@@ -18,6 +18,7 @@ The below example presents the default values.
 - **-o** Sets the offset of spectrometer to default value of 256
 - **-d** Sets usb port of the spectrometer to desired value [See your PC USB ports]
 - **-n** Number of measurements taken is set to default that is 10. If You want to change use -n flag
+- **-s** Creates directory "measure" and saves under data it as .txt and .png
 
 ### for Linux
 
