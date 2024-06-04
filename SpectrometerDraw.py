@@ -1,3 +1,11 @@
+"""
+The following programm communicates with Optel spectrometer, displays data as figures and optionally saves data
+Version program:
+    04.06.2024
+Authors:
+    Dawid Łukasiewicz, Michał Słodziński, Radosław Śliwiński
+"""
+
 import time
 from datetime import datetime
 from pathlib import Path
